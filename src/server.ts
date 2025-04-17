@@ -29,7 +29,6 @@ server.post('/translate', async (request, reply) => {
       temperature: 0
     });
     const tsCode = (completion.choices[0].message.content)?.replace(/```typescript/g, '').replace(/```/g, '') || '';
-    console.log(tsCode);
     return { code: tsCode };
   } catch (err) {
     server.log.error(err);

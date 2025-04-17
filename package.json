@@ -1,5 +1,5 @@
 {
-  "name": "js-to-ts-translator",
+  "name": "ai-code-translator-assistant",
   "version": "1.0.0",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
