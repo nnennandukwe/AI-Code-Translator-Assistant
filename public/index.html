@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JS to TS Translator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-4">JavaScript to TypeScript Translator</h1>
+    <form id="translate-form" class="space-y-4">
+      <div>
+        <label for="js-code" class="block font-medium">JavaScript Code</label>
+        <textarea id="js-code" rows="10" class="w-full p-2 border rounded"></textarea>
+      </div>
+      <button
+        type="submit"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Translate
+      </button>
+    </form>
+    <div class="mt-6">
+      <h2 class="text-2xl font-semibold mb-2">TypeScript Code</h2>
+      <textarea
+        id="ts-code"
+        rows="10"
+        class="w-full p-2 border rounded bg-gray-200"
+        readonly
+      ></textarea>
+    </div>
+  </div>
+  <script>
+    document.getElementById('translate-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const jsCode = document.getElementById('js-code').value;
+      const res = await fetch('/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: jsCode }),
+      });
+      const data = await res.json();
+      document.getElementById('ts-code').value = data.code;
+    });
+  </script>
+</body>
+</html>
