@@ -1,39 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="antialiased">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JS to TS Translator</title>
+  <title>JS → TS Translator</title>
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366F1'
+          }
+        }
+      }
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-6">
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold mb-4">JavaScript to TypeScript Translator</h1>
-    <form id="translate-form" class="space-y-4">
-      <div>
-        <label for="js-code" class="block font-medium">JavaScript Code</label>
-        <textarea id="js-code" rows="10" class="w-full p-2 border rounded"></textarea>
-      </div>
-      <button
-        type="submit"
-        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Translate
-      </button>
-    </form>
-    <div class="mt-6">
-      <h2 class="text-2xl font-semibold mb-2">TypeScript Code</h2>
-      <textarea
-        id="ts-code"
-        rows="10"
-        class="w-full p-2 border rounded bg-gray-200"
-        readonly
-      ></textarea>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-primary to-indigo-600 text-white p-6">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl md:text-4xl font-bold">JS → TS Translator</h1>
     </div>
-  </div>
+  </header>
+  <main class="flex-1 max-w-4xl mx-auto p-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
+    <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+      <label for="js-code" class="text-lg font-medium text-gray-700 dark:text-gray-200 mb-2">JavaScript Code</label>
+      <textarea id="js-code" class="flex-1 w-full p-4 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-mono rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="// Paste JS code here"></textarea>
+      <button id="translate-btn" type="button" class="mt-4 w-full bg-primary hover:bg-indigo-700 text-white py-3 font-semibold rounded-lg shadow transition duration-200">Translate</button>
+    </section>
+    <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md flex flex-col">
+      <label for="ts-code" class="text-lg font-medium text-gray-700 dark:text-gray-200 mb-2">TypeScript Code</label>
+      <textarea id="ts-code" readonly class="flex-1 w-full p-4 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-mono rounded-lg focus:outline-none"></textarea>
+    </section>
+  </main>
+  <footer class="text-center text-gray-500 dark:text-gray-400 py-4">
+    <small>Built with Fastify &amp; Tailwind CSS</small>
+  </footer>
   <script>
-    document.getElementById('translate-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Enable Tab key to insert indentation in the JS editor
+    const jsCodeEl = document.getElementById('js-code');
+    jsCodeEl.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + '\t' + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 1;
+      }
+    });
+
+    // Translate button handler
+    document.getElementById('translate-btn').addEventListener('click', async () => {
       const jsCode = document.getElementById('js-code').value;
       const res = await fetch('/translate', {
         method: 'POST',
