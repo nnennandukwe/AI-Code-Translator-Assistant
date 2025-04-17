@@ -1,9 +1,12 @@
+import 'dotenv/config';
+import OpenAI from 'openai';
 import fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
 import path from 'path';
-import { translate } from './translator';
 
 const server = fastify({ logger: true });
+// Initialize OpenAI client
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 server.register(fastifyStatic, {
   root: path.join(__dirname, '../public'),
@@ -16,8 +19,22 @@ server.get('/', (request, reply) => {
 
 server.post('/translate', async (request, reply) => {
   const { code } = request.body as { code: string };
-  const result = translate(code);
-  return { code: result };
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant that converts JavaScript code to TypeScript.' },
+        { role: 'user', content: `Translate the following JavaScript code to idiomatic TypeScript, adding type annotations where appropriate:\n\n${code}` }
+      ],
+      temperature: 0
+    });
+    const tsCode = (completion.choices[0].message.content)?.replace(/```typescript/g, '').replace(/```/g, '') || '';
+    console.log(tsCode);
+    return { code: tsCode };
+  } catch (err) {
+    server.log.error(err);
+    reply.status(500).send({ error: 'Translation failed.' });
+  }
 });
 
 const start = async () => {

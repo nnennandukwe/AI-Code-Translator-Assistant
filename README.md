@@ -10,6 +10,10 @@ Type or paste your JavaScript code in the left editor, click **Translate**, and 
 
 ## Setup
 
+Before running the app, create a `.env` file in the project root with your OpenAI API key:
+```
+OPENAI_API_KEY=your_openai_api_key_here
+```
 1. Install dependencies:
 
    ```bash
